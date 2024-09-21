@@ -59,7 +59,7 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
     if(v < 0)v = 0; //simple value clamping although it won't necessarily effect the output without it
     if(v > 4)v = 4;
 
-    if(ptrn == "plus"){ //the definition of every pattern mapped to its name
+    if(ptrn == "plus"){ //the definition of every pattern mapped to its name, I would use switch statements if they supported strings
         int pattern[5][5] = {{0,0,v,0,0},
                              {0,0,v,0,0},
                              {v,v,v,v,v},
@@ -124,7 +124,7 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
         return;
     }
 
-    if(opr == "add"){
+    if(opr == "add"){   //process the operation
         Add(tile,pattern);
         PrintTile(tile);
     }else if(opr == "subtract"){
@@ -152,10 +152,10 @@ int main(){
         cout << "\nPlease enter a command: ";
         cin >> pattern;
 
-        if(pattern == "list"){
+        if(pattern == "list"){  //lists all of the currently implemented patterns
             cout << "\nThe current list of patterns are: plus, diamond, cross, border, fill, square, hash, dots, corners, noise" << endl;
 
-        }else if(pattern == "help"){
+        }else if(pattern == "help"){    //helps the user uunderstand proper input formatting
             cout << "\n\nEnter up to 3 arguments, each seperated by spaces." << endl;
             cout << "\nThe first input should either be a menu option (list, clear, help, quit) or the name of a pattern." << endl;
             cout << "The second input should be the operation applied to your tile with the referenced pattern." << endl;
@@ -165,22 +165,21 @@ int main(){
             cout << "The last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
             cout << "\nAn example of a valid input would look like: border add 5" << endl;
 
-        }else if(pattern == "quit"){
+        }else if(pattern == "quit"){    //ends the program
             cout << "\nThank you, have a good day!";
 
-        }else if(pattern == "clear"){
+        }else if(pattern == "clear"){   //resets the user's current tile
             cout << "\nYour tile has been erased." << endl;
             Erase(tile);
 
-        }else if(pattern == "flip"){
+        }else if(pattern == "flip"){    //inverts the user's current tile
             cout << "\nYour tile has been flipped." << endl;
             Invert(tile);
             PrintTile(tile);
 
-        }else{
-            cin >> operation;
+        }else{  //if the first input wasn't a menu option, then process it as an operation
+            cin >> operation >> value;
             if(operation == "add" || operation == "subtract" || operation == "show"){
-                cin >> value;
                 Prefab(tile, pattern, operation, value);
             }else{
                 cout << "\nERROR: Invalid operation";
