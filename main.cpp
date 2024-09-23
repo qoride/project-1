@@ -71,6 +71,18 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
                              {v,v,v,v,v},
                              {0,v,v,v,0},
                              {0,0,v,0,0}};
+    }else if(ptrn == "+"){
+        int pattern[5][5] = {{0,0,0,0,0},
+                             {0,0,v,0,0},
+                             {0,v,v,v,0},
+                             {0,0,v,0,0},
+                             {0,0,0,0,0}};
+    }else if(ptrn == "x"){
+        int pattern[5][5] = {{0,0,0,0,0},
+                             {0,v,0,v,0},
+                             {0,0,v,0,0},
+                             {0,v,0,v,0},
+                             {0,0,0,0,0}};
     }else if(ptrn == "cross"){
         int pattern[5][5] = {{v,0,0,0,v},
                              {0,v,0,v,0},
@@ -158,7 +170,7 @@ int main(){
         }
 
         if(pattern == "list"){  //lists all of the currently implemented patterns
-            cout << "\nThe current list of patterns are: plus, diamond, cross, border, fill, square, hash, dots, corners, noise" << endl;
+            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square, hash, dots, corners, noise" << endl;
 
         }else if(pattern == "help"){    //helps the user understand proper input formatting
             cout << "\n\nEnter up to 3 arguments, each seperated by spaces." << endl;
@@ -169,7 +181,7 @@ int main(){
             cout << "Add and subtract will directly modify your tile." << endl;
             cout << "However show will show you what the referenced pattern looks like." << endl;
             cout << "\nThe last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
-            cout << "\nAn example of a valid input would look like: border add 5" << endl;
+            cout << "An example of a valid input would look like: border add 5" << endl;
 
         }else if(pattern == "quit"){    //ends the program
             cout << "\nThank you, have a good day!";
