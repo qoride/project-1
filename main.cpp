@@ -65,6 +65,30 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
                              {v,v,v,v,v},
                              {0,0,v,0,0},
                              {0,0,v,0,0}};
+    }else if(ptrn == "left"){
+        int pattern[5][5] = {{v,v,0,0,0},
+                             {v,v,0,0,0},
+                             {v,v,0,0,0},
+                             {v,v,0,0,0},
+                             {v,v,0,0,0}};
+    }else if(ptrn == "right"){
+        int pattern[5][5] = {{0,0,0,v,v},
+                             {0,0,0,v,v},
+                             {0,0,0,v,v},
+                             {0,0,0,v,v},
+                             {0,0,0,v,v}};
+    }else if(ptrn == "up"){
+        int pattern[5][5] = {{v,v,v,v,v},
+                             {v,v,v,v,v},
+                             {0,0,0,0,0},
+                             {0,0,0,0,0},
+                             {0,0,0,0,0}};
+    }else if(ptrn == "down"){
+        int pattern[5][5] = {{0,0,0,0,0},
+                             {0,0,0,0,0},
+                             {0,0,0,0,0},
+                             {v,v,v,v,v},
+                             {v,v,v,v,v}};
     }else if(ptrn == "diamond"){
         int pattern[5][5] = {{0,0,v,0,0},
                              {0,v,v,v,0},
@@ -95,6 +119,12 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
                              {v,0,0,0,v},
                              {v,0,0,0,v},
                              {v,v,v,v,v}};
+    }else if(ptrn == "bevel"){
+        int pattern[5][5] = {{v,0,0,0,v},
+                             {0,v,v,v,0},
+                             {0,v,0,v,0},
+                             {0,v,v,v,0},
+                             {v,0,0,0,v}};
     }else if(ptrn == "fill"){
         int pattern[5][5] = {{v,v,v,v,v},
                              {v,v,v,v,v},
@@ -159,7 +189,7 @@ int main(){
     int value;
     bool clearStack = false;
 
-    cout << "Type \"list\" to see the list of patterns, \"clear\" to erase your pattern, \"flip\" to invert your pattern,\n \"help\" for help on how to format an input, or \"quit\" to stop the program." << endl;
+    cout << "Type \"list\" to see the list of patterns, \"clear\" to erase your pattern, \"flip\" to invert your pattern,\n\"help\" for help on how to format an input, or \"quit\" to stop the program.\nYou start with an empty tile, why don't you start by drawing something?" << endl;
 
     while(pattern != "quit"){   //a hybrid user input system that accepts multiple formats of inputs, most edge cases can be solved just by inputting a menu option a few times until it works
         if(clearStack == false){
@@ -170,7 +200,7 @@ int main(){
         }
 
         if(pattern == "list"){  //lists all of the currently implemented patterns
-            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square, hash, dots, corners, noise" << endl;
+            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square\nbevel, hash, dots, corners, noise, up, down, left, right" << endl;
 
         }else if(pattern == "help"){    //helps the user understand proper input formatting
             cout << "\n\nEnter up to 3 arguments, each seperated by spaces." << endl;
@@ -181,7 +211,7 @@ int main(){
             cout << "Add and subtract will directly modify your tile." << endl;
             cout << "However show will show you what the referenced pattern looks like." << endl;
             cout << "\nThe last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
-            cout << "An example of a valid input would look like: border add 5" << endl;
+            cout << "An example of a valid input would look like: border add 5\n" << endl;
 
         }else if(pattern == "quit"){    //ends the program
             cout << "\nThank you, have a good day!";
