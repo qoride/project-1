@@ -145,24 +145,30 @@ int main(){
 
     string pattern,operation;
     int value;
+    bool clearStack = false;
 
-    cout << "Type \"list\" to see the list of patterns, \"clear\" to erase your pattern, \"flip\" to invert your pattern, \"help\" for help on how to format an input, or \"quit\" to stop the program." << endl;
+    cout << "Type \"list\" to see the list of patterns, \"clear\" to erase your pattern, \"flip\" to invert your pattern,\n \"help\" for help on how to format an input, or \"quit\" to stop the program." << endl;
 
     while(pattern != "quit"){   //a hybrid user input system that accepts multiple formats of inputs, most edge cases can be solved just by inputting a menu option a few times until it works
-        cout << "\nPlease enter a command: ";
-        cin >> pattern;
+        if(clearStack == false){
+            cout << "\nPlease enter a command: ";
+            cin >> pattern;
+        }else{
+            clearStack = false;
+        }
 
         if(pattern == "list"){  //lists all of the currently implemented patterns
             cout << "\nThe current list of patterns are: plus, diamond, cross, border, fill, square, hash, dots, corners, noise" << endl;
 
-        }else if(pattern == "help"){    //helps the user uunderstand proper input formatting
+        }else if(pattern == "help"){    //helps the user understand proper input formatting
             cout << "\n\nEnter up to 3 arguments, each seperated by spaces." << endl;
             cout << "\nThe first input should either be a menu option (list, clear, help, quit) or the name of a pattern." << endl;
-            cout << "The second input should be the operation applied to your tile with the referenced pattern." << endl;
+            cout << "If the first input is a menu option, there should be no other inputs." << endl;
+            cout << "\nThe second input should be the operation applied to your tile with the referenced pattern." << endl;
             cout << "Possible operations are add, subtract, and show." << endl;
             cout << "Add and subtract will directly modify your tile." << endl;
             cout << "However show will show you what the referenced pattern looks like." << endl;
-            cout << "The last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
+            cout << "\nThe last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
             cout << "\nAn example of a valid input would look like: border add 5" << endl;
 
         }else if(pattern == "quit"){    //ends the program
@@ -178,11 +184,14 @@ int main(){
             PrintTile(tile);
 
         }else{  //if the first input wasn't a menu option, then process it as an operation
-            cin >> operation >> value;
+            cin >> operation;
             if(operation == "add" || operation == "subtract" || operation == "show"){
+                cin >> value;
                 Prefab(tile, pattern, operation, value);
             }else{
                 cout << "\nERROR: Invalid operation";
+                clearStack = true;
+                pattern = "help";
             }
         }
         
