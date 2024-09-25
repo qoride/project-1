@@ -178,6 +178,10 @@ void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to
 
 }
 
+//combine operating methods
+//try to make prefab return a int*
+//make patterns open-ended, let user create their own patterns
+
 int main(){
     int tile[5][5] = {{0,0,0,0,0},
                       {0,0,0,0,0},
@@ -185,15 +189,14 @@ int main(){
                       {0,0,0,0,0},
                       {0,0,0,0,0}};
 
-    string pattern,operation;
+    string pattern = "help",operation;
     int value;
-    bool clearStack = false;
-
-    cout << "Type \"list\" to see the list of patterns, \"clear\" to erase your pattern, \"flip\" to invert your pattern,\n\"help\" for help on how to format an input, or \"quit\" to stop the program.\nYou start with an empty tile, why don't you start by drawing something?" << endl;
+    bool clearStack = true, ioTips = true;
 
     while(pattern != "quit"){   //a hybrid user input system that accepts multiple formats of inputs, most edge cases can be solved just by inputting a menu option a few times until it works
         if(clearStack == false){
-            cout << "\nPlease enter a command: ";
+            if(ioTips){cout << "\n(Tip: Try typing \"list\" to see the pattern names!)";}
+            cout << "\nEnter a command: ";
             cin >> pattern;
         }else{
             clearStack = false;
@@ -203,15 +206,22 @@ int main(){
             cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square\nbevel, hash, dots, corners, noise, up, down, left, right" << endl;
 
         }else if(pattern == "help"){    //helps the user understand proper input formatting
-            cout << "\n\nEnter up to 3 arguments, each seperated by spaces." << endl;
-            cout << "\nThe first input should either be a menu option (list, clear, help, quit) or the name of a pattern." << endl;
-            cout << "If the first input is a menu option, there should be no other inputs." << endl;
-            cout << "\nThe second input should be the operation applied to your tile with the referenced pattern." << endl;
-            cout << "Possible operations are add, subtract, and show." << endl;
-            cout << "Add and subtract will directly modify your tile." << endl;
-            cout << "However show will show you what the referenced pattern looks like." << endl;
-            cout << "\nThe last input is the value used to determine how potent the operation is. (0 to 4)" << endl;
-            cout << "An example of a valid input would look like: border add 5\n" << endl;
+            cout << "\n\nMENU OPTIONS" << endl
+            << "\"help\" - brings up this menu" << endl
+            << "\"list\" - shows a list of pattern names" << endl
+            << "\"hide\" - disables extra help tips" << endl
+            << "\"clear\" - erases your current tile" << endl
+            << "\"flip\" - inverts your current tile" << endl
+            << "\"quit\" - exits the program" << endl
+
+            << "\nTILE OPERATIONS" << endl
+            << "format - pattern operation value" << endl
+            << "pattern - a predefined tile, type \"list\" to see a list of patterns" << endl
+            << "operation - a function applied to your current tile"
+            << "\"add\" - adds the values of the pattern to your tile" << endl
+            << "\"subtract\" - subtracts from your tile with the pattern's values" << endl
+            << "\"show\" - shows the pattern without effecting your tile" << endl
+            << "value - how transparent/opaque the pattern is" << endl;
 
         }else if(pattern == "quit"){    //ends the program
             cout << "\nThank you, have a good day!";
@@ -225,9 +235,17 @@ int main(){
             Invert(tile);
             PrintTile(tile);
 
+        }else if(pattern == "hide"){    //turns off handholding
+            cout << "\nExtra help has been turned off." << endl;
+            ioTips = false;
+
         }else{  //if the first input wasn't a menu option, then process it as an operation
+            if(ioTips){cout << "\n(Tip: Try typing \"add\", \"subtract\", or \"show\"!";}
+            cout << "\nEnter an operation: ";
             cin >> operation;
             if(operation == "add" || operation == "subtract" || operation == "show"){
+                if(ioTips){cout << "\n(Tip: Enter a value between 0 to 4, 0 being completely transparent and 4 being completley solid!";}
+            cout << "\nEnter a value: ";
                 cin >> value;
                 Prefab(tile, pattern, operation, value);
             }else{
