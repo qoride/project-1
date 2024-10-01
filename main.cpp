@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include <cmath>
+#include <limits>
 
 using namespace std;
 const string symMap[] = {"  ","░░","▒▒","▓▓","██"}; //ASCII reference map
@@ -19,6 +20,7 @@ struct tileSpace Pattern(string ref, int v = 0);
 void Print(tileSpace t = Pattern("blank"));
 void Operate(tileSpace a, string opr, tileSpace b = Pattern("blank"));
 int Reference(string s, string l = "pattern");
+void clearStream();
 
 vector<tileSpace> customs;
 
@@ -79,15 +81,15 @@ int main(){
             ioTips = false;
 
         }else if(pattern == "make"){    //creates a new pattern
+            clearStream();
             do{
                 if(ioTips){cout << "\n(Tip: The name can't have any spaces in it, and it can't be the name of any existing commands or patterns)";}
                 cout << "\nEnter a name for your new pattern: ";
                 cin >> pattern;
                 if((Reference(pattern)!=-1)||(Reference(pattern,"operator")!=-1)){
                     cout << "\nERROR: The name for your pattern cannot be a pre-existing name." << endl;
-                    cin.clear();
-                    fflush(stdin);
                 }
+                clearStream();
             }while((Reference(pattern)!=-1)||(Reference(pattern,"operator")!=-1));
             
 
@@ -102,15 +104,22 @@ int main(){
                     cout << "\nFor row " << y+1 << ": ";
                     vector<int> inputs = {};
                     while(inputs.size()<5){
-                        cin >> value; //VERY BUGGY!!!
-                        inputs.push_back(value); //WORK IN PROGRESS!!!
+                        while(cin >> value){
+                            if((value==1)||(value==0)){
+                                inputs.push_back(value);
+                            }else{
+                                cout << "\nERROR: a value was not accepted, try again: ";
+                                clearStream();
+                                inputs.clear();
+                                break;
+                            }
+                            if(inputs.size()>=5)break;
+                        }
                     }
+                    clearStream();
                     for(int x = 0; x < 5; x++){
-                        newtile.arr[y][x] = (inputs.at(x)==0)?0:4;
+                        newtile.arr[y][x] = (inputs.at(x)==1)?4:0;
                     }
-                    cin.clear();
-                    fflush(stdin);
-                    cout << endl;
                 }
                 Print(newtile);
                 cout << "\nAre you satisfied with this result? [Y/N] ";
@@ -142,6 +151,11 @@ int main(){
     }
 
     return 0;
+}
+
+void clearStream(){
+    cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    cin.clear();
 }
 
 void Print(tileSpace t){
