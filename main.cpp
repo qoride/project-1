@@ -1,201 +1,37 @@
 #include <iostream>
 #include <cstdlib>
+#include <vector>
+#include <cmath>
 
 using namespace std;
 const string symMap[] = {"  ","░░","▒▒","▓▓","██"}; //ASCII reference map
 
-void PrintTile(int tile[5][5]){ //prints a symbol based on the index's value
-    for(int y = 0; y < 5; y++){
-        for(int x = 0; x < 5; x++){
-            cout << symMap[tile[y][x]];
-        }
-        cout << endl;
-    }
-}
+struct tileSpace{
+    int arr[5][5];
+};
 
-void Erase(int tile[5][5]){ //sets every value of a given array to 0 which correlates to "empty"
-    for(int y = 0; y < 5; y++){
-        for(int x = 0; x < 5; x++){
-            tile[y][x] = 0;
-        }
-    }
-}
+const string operators[5] = {"add","subtract","flip","erase"};
 
-void Invert(int tile[5][5]){    //since max opacity is 4, subtracting 4 by every value in the array "flips" the value
-    for(int y = 0; y < 5; y++){
-        for(int x = 0; x < 5; x++){
-            tile[y][x] = 4-tile[y][x];
-        }
-    }
-}
+vector<string> patterns = {"plus", "+", "diamond", "cross", "x", "border", "fill", "square","bevel",
+                           "hash", "dots", "corners", "noise", "up", "down", "left", "right"};
 
-void Add(int tile1[5][5],int tile2[5][5]){  //takes the values from the second argument and adds them to the first argument
-    int newVal;
-    for(int y = 0; y < 5; y++){
-        for(int x = 0; x < 5; x++){
-            newVal = tile1[y][x] += tile2[y][x];
-            if(newVal < 0){newVal = 0;} //automatically clamps the values to minimum and maximum "opacity"
-            if(newVal > 4){newVal = 4;}
-            tile1[y][x] = newVal;
-        }
-    }
-}
+struct tileSpace Pattern(string ref, int v = 0);
+void Print(tileSpace t = Pattern("blank"));
+void Operate(tileSpace a, string opr, tileSpace b = Pattern("blank"));
+int Reference(string s, string l = "pattern");
 
-void Subtract(int tile1[5][5],int tile2[5][5]){ //does the inverse of the Add method
-    int newVal;
-    for(int y = 0; y < 5; y++){
-        for(int x = 0; x < 5; x++){
-            newVal = tile1[y][x] -= tile2[y][x];
-            if(newVal < 0){newVal = 0;}
-            if(newVal > 4){newVal = 4;}
-            tile1[y][x] = newVal;
-        }
-    }
-}
-
-void Prefab(int tile[5][5], string ptrn, string opr, int v){    //main method to create and operate with patterns
-    int pattern[5][5];
-
-    if(v < 0)v = 0; //simple value clamping although it won't necessarily effect the output without it
-    if(v > 4)v = 4;
-
-    if(ptrn == "plus"){ //the definition of every pattern mapped to its name, I would use switch statements if they supported strings
-        int pattern[5][5] = {{0,0,v,0,0},
-                             {0,0,v,0,0},
-                             {v,v,v,v,v},
-                             {0,0,v,0,0},
-                             {0,0,v,0,0}};
-    }else if(ptrn == "left"){
-        int pattern[5][5] = {{v,v,0,0,0},
-                             {v,v,0,0,0},
-                             {v,v,0,0,0},
-                             {v,v,0,0,0},
-                             {v,v,0,0,0}};
-    }else if(ptrn == "right"){
-        int pattern[5][5] = {{0,0,0,v,v},
-                             {0,0,0,v,v},
-                             {0,0,0,v,v},
-                             {0,0,0,v,v},
-                             {0,0,0,v,v}};
-    }else if(ptrn == "up"){
-        int pattern[5][5] = {{v,v,v,v,v},
-                             {v,v,v,v,v},
-                             {0,0,0,0,0},
-                             {0,0,0,0,0},
-                             {0,0,0,0,0}};
-    }else if(ptrn == "down"){
-        int pattern[5][5] = {{0,0,0,0,0},
-                             {0,0,0,0,0},
-                             {0,0,0,0,0},
-                             {v,v,v,v,v},
-                             {v,v,v,v,v}};
-    }else if(ptrn == "diamond"){
-        int pattern[5][5] = {{0,0,v,0,0},
-                             {0,v,v,v,0},
-                             {v,v,v,v,v},
-                             {0,v,v,v,0},
-                             {0,0,v,0,0}};
-    }else if(ptrn == "+"){
-        int pattern[5][5] = {{0,0,0,0,0},
-                             {0,0,v,0,0},
-                             {0,v,v,v,0},
-                             {0,0,v,0,0},
-                             {0,0,0,0,0}};
-    }else if(ptrn == "x"){
-        int pattern[5][5] = {{0,0,0,0,0},
-                             {0,v,0,v,0},
-                             {0,0,v,0,0},
-                             {0,v,0,v,0},
-                             {0,0,0,0,0}};
-    }else if(ptrn == "cross"){
-        int pattern[5][5] = {{v,0,0,0,v},
-                             {0,v,0,v,0},
-                             {0,0,v,0,0},
-                             {0,v,0,v,0},
-                             {v,0,0,0,v}};
-    }else if(ptrn == "border"){
-        int pattern[5][5] = {{v,v,v,v,v},
-                             {v,0,0,0,v},
-                             {v,0,0,0,v},
-                             {v,0,0,0,v},
-                             {v,v,v,v,v}};
-    }else if(ptrn == "bevel"){
-        int pattern[5][5] = {{v,0,0,0,v},
-                             {0,v,v,v,0},
-                             {0,v,0,v,0},
-                             {0,v,v,v,0},
-                             {v,0,0,0,v}};
-    }else if(ptrn == "fill"){
-        int pattern[5][5] = {{v,v,v,v,v},
-                             {v,v,v,v,v},
-                             {v,v,v,v,v},
-                             {v,v,v,v,v},
-                             {v,v,v,v,v}};
-    }else if(ptrn == "square"){
-        int pattern[5][5] = {{0,0,0,0,0},
-                             {0,v,v,v,0},
-                             {0,v,v,v,0},
-                             {0,v,v,v,0},
-                             {0,0,0,0,0}};
-    }else if(ptrn == "hash"){
-        int pattern[5][5] = {{0,v,0,v,0},
-                             {v,v,v,v,v},
-                             {0,v,0,v,0},
-                             {v,v,v,v,v},
-                             {0,v,0,v,0}};
-    }else if(ptrn == "dots"){
-        int pattern[5][5] = {{v,0,v,0,v},
-                             {0,0,0,0,0},
-                             {v,0,v,0,v},
-                             {0,0,0,0,0},
-                             {v,0,v,0,v}};
-    }else if(ptrn == "corners"){
-        int pattern[5][5] = {{v,v,0,v,v},
-                             {v,v,0,v,v},
-                             {0,0,0,0,0},
-                             {v,v,0,v,v},
-                             {v,v,0,v,v}};
-    }else if(ptrn == "noise"){  //similar to the fill pattern, but every tile is random
-        int pattern[5][5] = {{(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v)},
-                             {(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v)},
-                             {(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v)},
-                             {(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v)},
-                             {(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v),(rand()%(2)*v)}};
-    }else{
-        cout << "\nERROR: Invalid pattern.";
-        return;
-    }
-
-    if(opr == "add"){   //process the operation
-        Add(tile,pattern);
-        PrintTile(tile);
-    }else if(opr == "subtract"){
-        Subtract(tile,pattern);
-        PrintTile(tile);
-    }else{
-        PrintTile(pattern);
-    }
-
-}
-
-//combine operating methods
-//try to make prefab return a int*
-//make patterns open-ended, let user create their own patterns
+vector<tileSpace> customs;
 
 int main(){
-    int tile[5][5] = {{0,0,0,0,0},
-                      {0,0,0,0,0},
-                      {0,0,0,0,0},
-                      {0,0,0,0,0},
-                      {0,0,0,0,0}};
+    tileSpace tile = Pattern("blank");
 
     string pattern = "help",operation;
     int value;
-    bool clearStack = true, ioTips = true;
+    bool clearStack = true, ioTips = true, editing = false;
 
     while(pattern != "quit"){   //a hybrid user input system that accepts multiple formats of inputs, most edge cases can be solved just by inputting a menu option a few times until it works
         if(clearStack == false){
-            if(ioTips){cout << "\n(Tip: Try typing \"list\" to see the pattern names!)";}
+            if(ioTips){cout << "\n(Tip: Try typing \"list\" to see the pattern names)";}
             cout << "\nEnter a command: ";
             cin >> pattern;
         }else{
@@ -203,15 +39,18 @@ int main(){
         }
 
         if(pattern == "list"){  //lists all of the currently implemented patterns
-            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square\nbevel, hash, dots, corners, noise, up, down, left, right" << endl;
+            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square"
+            << "\nbevel, hash, dots, corners, noise, up, down, left, right" << endl;
 
         }else if(pattern == "help"){    //helps the user understand proper input formatting
             cout << "\n\nMENU OPTIONS" << endl
+            << "format - option" << endl
             << "\"help\" - brings up this menu" << endl
             << "\"list\" - shows a list of pattern names" << endl
             << "\"hide\" - disables extra help tips" << endl
             << "\"clear\" - erases your current tile" << endl
             << "\"flip\" - inverts your current tile" << endl
+            << "\"make\" - create a new pattern" << endl
             << "\"quit\" - exits the program" << endl
 
             << "\nTILE OPERATIONS" << endl
@@ -228,26 +67,71 @@ int main(){
 
         }else if(pattern == "clear"){   //resets the user's current tile
             cout << "\nYour tile has been erased." << endl;
-            Erase(tile);
+            Operate(tile,"erase");
 
         }else if(pattern == "flip"){    //inverts the user's current tile
             cout << "\nYour tile has been flipped." << endl;
-            Invert(tile);
-            PrintTile(tile);
+            Operate(tile,"flip");
+            Print(tile);
 
         }else if(pattern == "hide"){    //turns off handholding
             cout << "\nExtra help has been turned off." << endl;
             ioTips = false;
 
+        }else if(pattern == "make"){    //creates a new pattern
+            do{
+                if(ioTips){cout << "\n(Tip: The name can't have any spaces in it, and it can't be the name of any existing commands or patterns)";}
+                cout << "\nEnter a name for your new pattern: ";
+                cin >> pattern;
+                if((Reference(pattern)!=-1)||(Reference(pattern,"operator")!=-1)){
+                    cout << "\nERROR: The name for your pattern cannot be a pre-existing name." << endl;
+                    cin.clear();
+                    fflush(stdin);
+                }
+            }while((Reference(pattern)!=-1)||(Reference(pattern,"operator")!=-1));
+            
+
+            if(ioTips){cout << "\n(Tip: 1 means that cell will receive inputs, while 0 means it will be empty)";}
+            cout << "\nEnter 5 values seperated by spaces (1 or 0) for each row." << endl;
+
+            editing = true;
+            tileSpace newtile = Pattern("blank");
+
+            while(editing){
+                for(int y = 0; y < 5; y++){
+                    cout << "\nFor row " << y+1 << ": ";
+                    vector<int> inputs = {};
+                    while(inputs.size()<5){
+                        cin >> value; //VERY BUGGY!!!
+                        inputs.push_back(value); //WORK IN PROGRESS!!!
+                    }
+                    for(int x = 0; x < 5; x++){
+                        newtile.arr[y][x] = (inputs.at(x)==0)?0:4;
+                    }
+                    cin.clear();
+                    fflush(stdin);
+                    cout << endl;
+                }
+                Print(newtile);
+                cout << "\nAre you satisfied with this result? [Y/N] ";
+                cin >> operation;
+                if(operation == "Y"){
+                    patterns.push_back(pattern);
+                    customs.push_back(newtile);
+                    editing = false;
+                }else{
+                    cout << "\nRestarting..." << endl;
+                }
+            }
         }else{  //if the first input wasn't a menu option, then process it as an operation
-            if(ioTips){cout << "\n(Tip: Try typing \"add\", \"subtract\", or \"show\"!";}
+            if(ioTips){cout << "\n(Tip: Try typing \"add\", \"subtract\", or \"show\")";}
             cout << "\nEnter an operation: ";
             cin >> operation;
             if(operation == "add" || operation == "subtract" || operation == "show"){
-                if(ioTips){cout << "\n(Tip: Enter a value between 0 to 4, 0 being completely transparent and 4 being completley solid!";}
-            cout << "\nEnter a value: ";
+                if(ioTips){cout << "\n(Tip: Enter a value between 0 to 4, 0 being completely transparent and 4 being completley solid)";}
+                cout << "\nEnter a value: ";
                 cin >> value;
-                Prefab(tile, pattern, operation, value);
+                Operate(tile,operation,Pattern(pattern,value));
             }else{
                 cout << "\nERROR: Invalid operation";
                 clearStack = true;
@@ -258,5 +142,195 @@ int main(){
     }
 
     return 0;
+}
 
+void Print(tileSpace t){
+    for(int y = 0; y < 5; y++){
+        for(int x = 0; x < 5; x++){
+            cout << symMap[t.arr[y][x]];
+        }
+        cout << endl;
+    }
+}
+
+void Operate(tileSpace a, string opr, tileSpace b){
+    for(int y = 0; y < 5; y++){
+        for(int x = 0; x < 5; x++){
+            switch(Reference(opr,"operator")){
+            case 0: //add
+                a.arr[y][x] += b.arr[y][x];
+                break;
+            case 1: //subtract
+                a.arr[y][x] -= b.arr[y][x];
+                break;
+            case 2: //flip
+                a.arr[y][x] = 4-a.arr[y][x];
+                break;
+            case 3: //erase
+                a.arr[y][x] = 0;
+                break;
+            default: //invalid operator
+                if(opr=="show")Print(b);
+                return;
+            }
+            if(a.arr[y][x] < 0)a.arr[y][x] = 0;
+            if(a.arr[y][x] > 4)a.arr[y][x] = 4;
+        }
+        Print(a);
+    }
+}
+
+int Reference(string s, string l){
+    int size = (l == "operator")?5:patterns.size();
+    for(int i = 0; i < size; i++){
+        if(l == "operator"){
+            if(s == operators[i])return i;
+        }else{
+            if(s == patterns.at(i))return i;
+        }
+    }
+    return -1;
+}
+
+struct tileSpace Pattern(string ref, int v){
+    if(v < 0)v = 0;
+    struct tileSpace pattern;
+    
+    int r = Reference(ref);
+    switch(r){
+        case -1: //no reference
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = 0;
+                }
+            }
+            break;
+        case 0: //plus
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x==2||y==2)?v:0;
+                }
+            }
+            break;
+        case 1: //+
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = ((y!=0&&y!=4)&&(x!=0&&x!=4)&&(x==2||y==2))?v:0;
+                }
+            }
+            break;
+        case 2: //diamond
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = ((((x<3)?x:4-x)+((y<3)?y:4-y))>1)?v:0;
+                }
+            }
+            break;
+        case 3: //cross
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x==y||x==4-y)?v:0;
+                }
+            }
+            break;
+        case 4: //x
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = ((x!=0&&x!=4)&&(x==y||x==4-y))?v:0;
+                }
+            }
+            break;
+        case 5: //border
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x!=0&&y!=0&&x!=4&&y!=4)?0:v;
+                }
+            }
+            break;
+        case 6: //fill
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = v;
+                }
+            }
+            break;
+        case 7: //square
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x!=0&&y!=0&&x!=4&&y!=4)?v:0;
+                }
+            }
+            break;
+        case 8: //bevel
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = 0; //UNFINISHED
+                }
+            }
+            break;
+        case 9: //hash
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x%2&&y%2)?v:0;
+                }
+            }
+            break;
+        case 10: //dots
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x%2==0&&y%2==0)?v:0;
+                }
+            }
+            break;
+        case 11: //corners
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x!=3&&y!=3)?v:0;
+                }
+            }
+            break;
+        case 12: //noise
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = rand()%(2)*v;
+                }
+            }
+            break;
+        case 13: //up
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (y < 2)?v:0;
+                }
+            }
+            break;
+        case 14: //down
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (y > 2)?v:0;
+                }
+            }
+            break;
+        case 15: //left
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x < 2)?v:0;
+                }
+            }
+            break;
+        case 16: //right
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (x > 2)?v:0;
+                }
+            }
+            break;
+        default: //custom patterns
+            for(int y = 0; y < 5; y++){
+                for(int x = 0; x < 5; x++){
+                    pattern.arr[y][x] = (customs.at(r-17).arr[y][x]==4)?v:0;
+                }
+            }
+            break;
+    }
+    return pattern;
 }
