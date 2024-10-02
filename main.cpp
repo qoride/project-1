@@ -62,7 +62,7 @@ int main(){
             << "\nTILE OPERATIONS" << endl
             << "format - pattern operation value" << endl
             << "pattern - a predefined tile, type \"list\" to see a list of patterns" << endl
-            << "operation - a function applied to your current tile"
+            << "operation - a function applied to your current tile" << endl
             << "\"add\" - adds the values of the pattern to your tile" << endl
             << "\"subtract\" - subtracts from your tile with the pattern's values" << endl
             << "\"show\" - shows the pattern without effecting your tile" << endl
