@@ -11,7 +11,7 @@ struct tileSpace{
     int arr[5][5];
 };
 
-const string operators[5] = {"add","subtract","flip","erase"};
+const string operators[4] = {"add","subtract","flip","erase"};
 
 vector<string> patterns = {"plus", "+", "diamond", "cross", "x", "border", "fill", "square","bevel",
                            "hash", "dots", "corners", "noise", "up", "down", "left", "right"};
