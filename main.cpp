@@ -16,9 +16,10 @@ const string operators[5] = {"add","subtract","flip","erase"};
 vector<string> patterns = {"plus", "+", "diamond", "cross", "x", "border", "fill", "square","bevel",
                            "hash", "dots", "corners", "noise", "up", "down", "left", "right"};
 
+//PROTOTYPES
 struct tileSpace Pattern(string ref, int v = 0);
 void Print(tileSpace t = Pattern("blank"));
-void Operate(tileSpace a, string opr, tileSpace b = Pattern("blank"));
+void Operate(tileSpace &a, string opr, tileSpace b = Pattern("blank"));
 int Reference(string s, string l = "pattern");
 void clearStream();
 
@@ -29,27 +30,30 @@ int main(){
 
     string pattern = "help",operation;
     int value;
-    bool clearStack = true, ioTips = true, editing = false;
+    bool ignoreInput = true, ioTips = true, editing = false;
 
-    while(pattern != "quit"){   //a hybrid user input system that accepts multiple formats of inputs, most edge cases can be solved just by inputting a menu option a few times until it works
-        if(clearStack == false){
+    while(pattern != "quit"){ //main menu
+        if(ignoreInput == false){
             if(ioTips){cout << "\n(Tip: Try typing \"list\" to see the pattern names)";}
             cout << "\nEnter a command: ";
             cin >> pattern;
         }else{
-            clearStack = false;
+            ignoreInput = false;
         }
 
-        if(pattern == "list"){  //lists all of the currently implemented patterns
-            cout << "\nThe current list of patterns are: plus, +, diamond, cross, x, border, fill, square"
-            << "\nbevel, hash, dots, corners, noise, up, down, left, right" << endl;
+        if(pattern == "list"){ //lists all of the currently implemented patterns
+            cout << "\nThe current list of patterns are: ";
+            for(string p:patterns){
+                cout << p << ", ";
+            }
+            cout << endl;
 
-        }else if(pattern == "help"){    //helps the user understand proper input formatting
+        }else if(pattern == "help"){ //helps the user understand proper input formats
             cout << "\n\nMENU OPTIONS" << endl
             << "format - option" << endl
             << "\"help\" - brings up this menu" << endl
             << "\"list\" - shows a list of pattern names" << endl
-            << "\"hide\" - disables extra help tips" << endl
+            << "\"tips\" - toggles extra help tips" << endl
             << "\"clear\" - erases your current tile" << endl
             << "\"flip\" - inverts your current tile" << endl
             << "\"make\" - create a new pattern" << endl
@@ -64,23 +68,22 @@ int main(){
             << "\"show\" - shows the pattern without effecting your tile" << endl
             << "value - how transparent/opaque the pattern is" << endl;
 
-        }else if(pattern == "quit"){    //ends the program
+        }else if(pattern == "quit"){ //ends the program
             cout << "\nThank you, have a good day!";
 
-        }else if(pattern == "clear"){   //resets the user's current tile
+        }else if(pattern == "clear"){ //resets the user's current tile
             cout << "\nYour tile has been erased." << endl;
             Operate(tile,"erase");
 
-        }else if(pattern == "flip"){    //inverts the user's current tile
+        }else if(pattern == "flip"){ //inverts the user's current tile
             cout << "\nYour tile has been flipped." << endl;
             Operate(tile,"flip");
-            Print(tile);
 
-        }else if(pattern == "hide"){    //turns off handholding
-            cout << "\nExtra help has been turned off." << endl;
-            ioTips = false;
+        }else if(pattern == "tips"){ //toggles handholding
+            ioTips = !ioTips;
+            cout << "\nExtra help has been turned " << ((ioTips)?"on.":"off.") << endl;
 
-        }else if(pattern == "make"){    //creates a new pattern
+        }else if(pattern == "make"){ //creates a new pattern
             clearStream();
             do{
                 if(ioTips){cout << "\n(Tip: The name can't have any spaces in it, and it can't be the name of any existing commands or patterns)";}
@@ -93,27 +96,26 @@ int main(){
             }while((Reference(pattern)!=-1)||(Reference(pattern,"operator")!=-1));
             
 
-            if(ioTips){cout << "\n(Tip: 1 means that cell will receive inputs, while 0 means it will be empty)";}
+            if(ioTips){cout << "\n(Tip: 0 means that cell will be empty, any input that's not 1 or 0 will be treated as 0)";}
             cout << "\nEnter 5 values seperated by spaces (1 or 0) for each row." << endl;
 
             editing = true;
             tileSpace newtile = Pattern("blank");
 
-            while(editing){
+            while(editing){ //tileSpace editor
                 for(int y = 0; y < 5; y++){
                     cout << "\nFor row " << y+1 << ": ";
                     vector<int> inputs = {};
                     while(inputs.size()<5){
                         while(cin >> value){
-                            if((value==1)||(value==0)){
-                                inputs.push_back(value);
-                            }else{
-                                cout << "\nERROR: a value was not accepted, try again: ";
-                                clearStream();
-                                inputs.clear();
-                                break;
-                            }
+                            if(cin.good())inputs.push_back(value);
                             if(inputs.size()>=5)break;
+                        }
+                        if(cin.fail()){
+                            cin.clear();
+                            cout << "\nERROR: A value was not accepted, try again: ";
+                            inputs.clear();
+                            clearStream();
                         }
                     }
                     clearStream();
@@ -132,33 +134,38 @@ int main(){
                     cout << "\nRestarting..." << endl;
                 }
             }
-        }else{  //if the first input wasn't a menu option, then process it as an operation
-            if(ioTips){cout << "\n(Tip: Try typing \"add\", \"subtract\", or \"show\")";}
-            cout << "\nEnter an operation: ";
-            cin >> operation;
-            if(operation == "add" || operation == "subtract" || operation == "show"){
-                if(ioTips){cout << "\n(Tip: Enter a value between 0 to 4, 0 being completely transparent and 4 being completley solid)";}
-                cout << "\nEnter a value: ";
-                cin >> value;
-                Operate(tile,operation,Pattern(pattern,value));
+        }else{ //if the first input wasn't a menu option, then decode it as an operation
+            clearStream();
+            if(Reference(pattern,"pattern") == -1){
+                cout << "\nERROR: Invalid menu option/referenced pattern does not exist" << endl;
             }else{
-                cout << "\nERROR: Invalid operation";
-                clearStack = true;
-                pattern = "help";
+                if(ioTips){cout << "\n(Tip: Try typing \"add\", \"subtract\", or \"show\")";}
+                cout << "\nEnter an operation: ";
+                cin >> operation;
+                if(operation == "add" || operation == "subtract" || operation == "show"){
+                    clearStream();
+                    if(ioTips){cout << "\n(Tip: Enter a value between 0 to 4, 0 being completely transparent and 4 being completley solid)";}
+                    cout << "\nEnter a value: ";
+                    cin >> value;
+                    Operate(tile,operation,Pattern(pattern,value));
+                }else{
+                    cout << "\nERROR: Invalid operation" << endl;
+                    ignoreInput = true;
+                    pattern = "help";
+                }
             }
-        }
-        
+        }      
     }
-
     return 0;
 }
 
-void clearStream(){
+//DEFINITIONS
+void clearStream(){ //reject the rest of the inputs
     cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
     cin.clear();
 }
 
-void Print(tileSpace t){
+void Print(tileSpace t){ //print function for tileSpace
     for(int y = 0; y < 5; y++){
         for(int x = 0; x < 5; x++){
             cout << symMap[t.arr[y][x]];
@@ -167,7 +174,7 @@ void Print(tileSpace t){
     }
 }
 
-void Operate(tileSpace a, string opr, tileSpace b){
+void Operate(tileSpace &a, string opr, tileSpace b){ //performs an operation on two tileSpaces
     for(int y = 0; y < 5; y++){
         for(int x = 0; x < 5; x++){
             switch(Reference(opr,"operator")){
@@ -190,11 +197,11 @@ void Operate(tileSpace a, string opr, tileSpace b){
             if(a.arr[y][x] < 0)a.arr[y][x] = 0;
             if(a.arr[y][x] > 4)a.arr[y][x] = 4;
         }
-        Print(a);
     }
+    Print(a);
 }
 
-int Reference(string s, string l){
+int Reference(string s, string l){ //returns the index of a string from the given array
     int size = (l == "operator")?5:patterns.size();
     for(int i = 0; i < size; i++){
         if(l == "operator"){
@@ -206,7 +213,7 @@ int Reference(string s, string l){
     return -1;
 }
 
-struct tileSpace Pattern(string ref, int v){
+struct tileSpace Pattern(string ref, int v){    //creates a tileSpace when given a pattern name and value
     if(v < 0)v = 0;
     struct tileSpace pattern;
     
@@ -278,9 +285,10 @@ struct tileSpace Pattern(string ref, int v){
         case 8: //bevel
             for(int y = 0; y < 5; y++){
                 for(int x = 0; x < 5; x++){
-                    pattern.arr[y][x] = 0; //UNFINISHED
+                    pattern.arr[y][x] = ((x!=0&&y!=0&&x!=4&&y!=4)||(x==y||x==4-y))?v:0;
                 }
             }
+            pattern.arr[2][2] = 0;
             break;
         case 9: //hash
             for(int y = 0; y < 5; y++){
