@@ -3,24 +3,29 @@ This is a program that's designed to provide an interface with the user in order
 
 Programmed by Anthony Liu on 9/20/24
 # Setup
-In order to run this program, simply execute main.cpp and the rest of the input should be done in the terminal.
-The acceptable inputs are already listed in the program with the "list" and "help" functions, but for redudancy I will explain them in detail here.
-## Input
-### list
-Typing "list" in the terminal will print a list of the names of the current implemented patterns. Use this to reference patterns for operation commands.
-### clear
-Typing "clear" in the terminal will erase your current tile, starting fresh with a blank slate.
-### flip
-Typing "flip" in the terminal will invert all the values of your current tile. Blank spaces will become solid, and solid spaces will become blank, etc.
+In order to run this program, simply execute main.cpp and the rest of the input should be done in the console.
+The acceptable inputs are already listed in the program with the "list" and "help" functions, but for documentation purposes I will explain them in detail here.
+## Menu Options
 ### help
-Typing "help" in the terminal will print a guide on how to format your inputs to perform commands and operations via. the terminal.
+Typing "help" will give a brief rundown on how to format console inputs, and what commands are available.
+### list
+Typing "list" prints the current list of valid patterns.
+### clear
+Typing "clear" will erase your current tile, starting fresh with a blank slate.
+### flip
+Typing "flip" will invert all the values of your current tile. Blank spaces will become solid, and solid spaces will become blank, etc.
+### tips
+Typing "tips" will toggle the extra tips added throughout the program.
+### make
+Typing "make" will open the tile creation sub-menu which allows the user to design their own patterns and add them to the list of valid patterns.
 ### quit
-Typing "quit" in the terminal will end the program, preventing any communication between the user and the terminal and finalizing your tile's design.
+Typing "quit" will end the program, preventing any communication between the user and the terminal and finalizing your tile's design.
+## Tile Operations
 ### add
-Typing "x add y", referencing a pattern from "list" for x, and inputting any numerical value (automatically clamped between 0 to 4) for y will perform the add operation onto your tile. This adds y to every value of your tile that intersects with x.
+Typing "x add y", referencing a pattern from "list" for x, and inputting any numerical value (automatically clamped between 0 to 4) for y will perform a union operation with pattern "x" and your current tile.
 ### subtract
-Typing "x subtract y", referencing a pattern from "list" for x, and inputting any numerical value (automatically clamped between 0 to 4) for y will perform the subtract operation onto your tile. This subtracts y to every value of your tile that intersects with x.
+Typing "x subtract y", does the same as "x add y" but it will perform a negate operation instead.
 ### show
-Typing "x show y", referencing a pattern from "list" for x, and inputting any numerical value (automatically clamped between 0 to 4) for y will output the referenced pattern to the terminal with a value of y. This has no effect on your current tile.
+Typing "x show y", will show you pattern "x" in the console without effecting your actual tile.
 # General Info
-This program is able to draw 5x5 tiles with varying opacity by storing tiles with a 2-dimensional array of integers with values ranging from 0 to 4. When printing out a tile, the program references a character from a list of ASCII symbols that represent opacity, and pritns out the index based on the value of the tile. This is how the program is able to seemingly blend patterns together at different potencies. The addition and subtraction operations are pretty simple, iterating through every value of the current tile and adding or subtracting values referenced from a prefrabricated pattern onto the original tile. Pairing all of these methods with a simple user interface using the terminal allows the user to design small tiles however they wish.
+This program is gives the user the ability to design 5x5 tiles with varying opacity by perform a series of boolean operations. Tile are stored under a structure called tileSpace which contains a 2-dimensional array of integers (0 to 4). In order to display tiles to the user, the program prints each cell of a tile using nested for-loops while passing the value as the index through a list of ASCII symbols to simulate opacity. This program accounts for various edge cases and achieve a balance between being user-friendly while not limiting the artistic creativity of the user.
