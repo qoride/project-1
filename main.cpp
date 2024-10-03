@@ -35,7 +35,7 @@ int main(){
     while(pattern != "quit"){ //main menu
         if(ignoreInput == false){
             if(ioTips){cout << "\n(Tip: Try typing \"list\" to see the pattern names)";}
-            cout << "\nEnter a command: ";
+            cout << "\nEnter a menu option or the name of a pattern: ";
             cin >> pattern;
         }else{
             ignoreInput = false;
@@ -50,7 +50,7 @@ int main(){
 
         }else if(pattern == "help"){ //helps the user understand proper input formats
             cout << "\n\nMENU OPTIONS" << endl
-            << "format - option" << endl
+            << "format: option" << endl
             << "\"help\" - brings up this menu" << endl
             << "\"list\" - shows a list of pattern names" << endl
             << "\"tips\" - toggles extra help tips" << endl
@@ -60,7 +60,7 @@ int main(){
             << "\"quit\" - exits the program" << endl
 
             << "\nTILE OPERATIONS" << endl
-            << "format - pattern operation value" << endl
+            << "format: pattern operation value (one input at a time)" << endl
             << "pattern - a predefined tile, type \"list\" to see a list of patterns" << endl
             << "operation - a function applied to your current tile" << endl
             << "\"add\" - adds the values of the pattern to your tile" << endl
