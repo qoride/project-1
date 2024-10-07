@@ -307,7 +307,7 @@ struct tileSpace Pattern(string ref, int v){    //creates a tileSpace when given
         case 11: //corners
             for(int y = 0; y < 5; y++){
                 for(int x = 0; x < 5; x++){
-                    pattern.arr[y][x] = (x!=3&&y!=3)?v:0;
+                    pattern.arr[y][x] = (x!=2&&y!=2)?v:0;
                 }
             }
             break;
