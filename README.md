@@ -29,3 +29,11 @@ Typing "x subtract y", does the same as "x add y" but it will perform a negate o
 Typing "x show y", will show you pattern "x" in the console without effecting your actual tile.
 # General Info
 This program is gives the user the ability to design 5x5 tiles with varying opacity by perform a series of boolean operations. Tile are stored under a structure called tileSpace which contains a 2-dimensional array of integers (0 to 4). In order to display tiles to the user, the program prints each cell of a tile using nested for-loops while passing the value as the index through a list of ASCII symbols to simulate opacity. This program accounts for various edge cases and achieve a balance between being user-friendly while not limiting the artistic creativity of the user.
+# Walkthrough
+### Creating a tile
+When first running the program, it will automatically run the "help" command for you and it should look like this:
+![image](https://github.com/user-attachments/assets/8418cb5d-1da2-4a7c-bb9e-adf6b5c9d1f3)
+
+### Add and subtract
+
+### Other
