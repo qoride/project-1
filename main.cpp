@@ -293,7 +293,7 @@ struct tileSpace Pattern(string ref, int v){    //creates a tileSpace when given
         case 9: //hash
             for(int y = 0; y < 5; y++){
                 for(int x = 0; x < 5; x++){
-                    pattern.arr[y][x] = (x%2&&y%2)?v:0;
+                    pattern.arr[y][x] = (x%2||y%2)?v:0;
                 }
             }
             break;
